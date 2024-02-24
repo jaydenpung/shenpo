@@ -5,8 +5,9 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '神婆 | shenpo.com.my',
-  description: '神婆',
+  title: '神婆 | shenpo.my',
+  description: 'shenpo.my',
+  keywords: 'shenpo, shenpo.my',
 };
 
 export default function RootLayout({
