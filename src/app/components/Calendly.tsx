@@ -9,6 +9,7 @@ const Calendly = () => {
     <div id="root">
       <Button
         variant="contained"
+        size="large"
         startIcon={<CalendarMonth />}
         onClick={() => setIsOpen(true)}
         sx={{
