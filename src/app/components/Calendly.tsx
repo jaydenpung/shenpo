@@ -5,8 +5,9 @@ import { PopupButton, PopupModal } from 'react-calendly';
 
 const Calendly = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef(null);
   return (
-    <div id="root">
+    <div ref={ref}>
       <Button
         variant="contained"
         size="large"
@@ -30,7 +31,7 @@ const Calendly = () => {
          * specify the rootElement property to ensure that the modal is inserted into the correct domNode.
          */
         //@ts-ignore
-        rootElement={document.getElementById('root')}
+        rootElement={ref.current}
       />
     </div>
   );
