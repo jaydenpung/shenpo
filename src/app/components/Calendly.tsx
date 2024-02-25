@@ -22,17 +22,19 @@ const Calendly = () => {
         Request a 1-on-1 appointment now!
       </Button>
 
-      <PopupModal
-        url="https://calendly.com/shenpo/shenpo-1-on-1"
-        onModalClose={() => setIsOpen(false)}
-        open={isOpen}
-        /*
-         * react-calendly uses React's Portal feature (https://reactjs.org/docs/portals.html) to render the popup modal. As a result, you'll need to
-         * specify the rootElement property to ensure that the modal is inserted into the correct domNode.
-         */
-        //@ts-ignore
-        rootElement={ref.current}
-      />
+      <div style={{ height: '70vh' }}>
+        <PopupModal
+          url="https://calendly.com/shenpo/shenpo-1-on-1"
+          onModalClose={() => setIsOpen(false)}
+          open={isOpen}
+          /*
+           * react-calendly uses React's Portal feature (https://reactjs.org/docs/portals.html) to render the popup modal. As a result, you'll need to
+           * specify the rootElement property to ensure that the modal is inserted into the correct domNode.
+           */
+          //@ts-ignore
+          rootElement={ref.current}
+        />
+      </div>
     </div>
   );
 };
