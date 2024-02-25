@@ -185,9 +185,9 @@ const Galaxy = () => {
         100,
       );
 
-      camera.position.x = Math.floor(Math.random() * 5) + 1;
-      camera.position.y = Math.floor(Math.random() * 5) + 1;
-      camera.position.z = Math.floor(Math.random() * 5) + 1;
+      camera.position.x = Math.floor(Math.random() * 4) + 1;
+      camera.position.y = Math.floor(Math.random() * 4) + 1;
+      camera.position.z = Math.floor(Math.random() * 4) + 1;
       scene.add(camera);
 
       // Controls
