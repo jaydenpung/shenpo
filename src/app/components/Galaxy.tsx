@@ -6,13 +6,16 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { AdditiveBlending } from 'three';
 
 const Galaxy = () => {
-  const generateRandom = (min: number, max: number) => {
-    const randomNum = Math.random() * (max - min) + min;
+  const generateRandom = (min: number, max: number, increment: number) => {
+    const randomNum =
+      Math.floor(
+        Math.random() * ((max - min) / increment + 1) + min / increment,
+      ) * increment;
     return randomNum;
   };
 
-  const randomXSpeed = generateRandom(0.1, 0.3);
-  const randomYSpeed = generateRandom(0.01, 0.05);
+  const randomXSpeed = generateRandom(0.1, 0.3, 0.1);
+  const randomYSpeed = generateRandom(0.01, 0.05, 0.01);
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,7 +35,7 @@ const Galaxy = () => {
       parameters.count = 70000;
       parameters.size = 0.01;
       parameters.radius = 5;
-      parameters.branches = 8;
+      parameters.branches = generateRandom(6, 12, 1);
       parameters.spin = 1;
       parameters.randomness = 0.3;
       parameters.randomnessPower = 5;
@@ -193,9 +196,9 @@ const Galaxy = () => {
         100,
       );
 
-      camera.position.x = generateRandom(1, 4);
-      camera.position.y = generateRandom(1, 4);
-      camera.position.z = generateRandom(1, 4);
+      camera.position.x = generateRandom(1, 4, 1);
+      camera.position.y = generateRandom(1, 4, 1);
+      camera.position.z = generateRandom(1, 4, 1);
       scene.add(camera);
 
       // Controls
