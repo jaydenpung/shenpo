@@ -198,7 +198,7 @@ const Galaxy = () => {
         );
 
         camera.position.x = generateRandom(1, 4, 1);
-        camera.position.y = generateRandom(1, 4, 1);
+        camera.position.y = generateRandom(1, 3, 1);
         camera.position.z = generateRandom(1, 4, 1);
         scene.add(camera);
 
