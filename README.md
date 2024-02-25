@@ -15,7 +15,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
 - `Galaxy.tsx` - galaxy view built with three.js. Modified from [galaxyM1199](https://github.com/the-halfbloodprince/GalaxyM1199) to be usable in react component
 - `Calendly.tsx` - integration with calendly
