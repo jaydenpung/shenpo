@@ -16,7 +16,7 @@ export default function Home() {
     setTimeout(() => {
       setBeenHere(true);
       localStorage.setItem('beenHere', 'true');
-    }, 3000);
+    }, 4800);
   }, []);
   return (
     <div ref={ref}>
@@ -37,17 +37,9 @@ export default function Home() {
       </div>
 
       {!beenHere && (
-        <Image
-          alt="drag-left"
-          src="/drag.gif"
-          width="80"
-          height="80"
-          style={{
-            position: 'fixed',
-            left: '50%',
-            bottom: '30%',
-          }}
-        />
+        <div className={styles.dragGesture}>
+          <Image alt="drag-left" src="/drag.gif" width="80" height="80" />
+        </div>
       )}
     </div>
   );

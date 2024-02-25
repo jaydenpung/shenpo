@@ -19,3 +19,12 @@
   position: fixed;
   top: 0;
 }
+
+.dragGesture {
+  position: fixed;
+  bottom: 30%;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  pointer-events: none;
+}
