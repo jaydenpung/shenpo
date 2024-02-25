@@ -18,226 +18,242 @@ const Galaxy = () => {
   const randomYSpeed = generateRandom(0.01, 0.05, 0.01);
 
   useEffect(() => {
-    setTimeout(() => {
-      const textureLoader = new THREE.TextureLoader();
-      const shape = textureLoader.load('/particleShape/1.png');
+    const start = () => {
+      setTimeout(() => {
+        const textureLoader = new THREE.TextureLoader();
+        const shape = textureLoader.load('/particleShape/1.png');
 
-      // Canvas
-      const canvas = document.querySelector('canvas');
+        // Canvas
+        const canvas = document.querySelector('canvas');
 
-      // Scene
-      const scene = new THREE.Scene();
+        // Scene
+        const scene = new THREE.Scene();
 
-      //Galaxy Generator
+        //Galaxy Generator
 
-      const parameters = {};
+        const parameters = {};
 
-      parameters.count = 70000;
-      parameters.size = 0.01;
-      parameters.radius = 5;
-      parameters.branches = generateRandom(6, 12, 1);
-      parameters.spin = 1;
-      parameters.randomness = 0.3;
-      parameters.randomnessPower = 5;
-      parameters.stars = 9000;
-      parameters.starColor = '#1b3984';
-      parameters.insideColor = '#ff6030';
-      parameters.outsideColor = '#1b3984';
+        parameters.count = 70000;
+        parameters.size = 0.01;
+        parameters.radius = 5;
+        parameters.branches = generateRandom(6, 12, 1);
+        parameters.spin = 1;
+        parameters.randomness = 0.3;
+        parameters.randomnessPower = 5;
+        parameters.stars = 9000;
+        parameters.starColor = '#1b3984';
+        parameters.insideColor = '#ff6030';
+        parameters.outsideColor = '#1b3984';
 
-      let bgStarsGeometry = null;
-      let bgStarsMaterial = null;
-      let bgStars = null;
+        let bgStarsGeometry = null;
+        let bgStarsMaterial = null;
+        let bgStars = null;
 
-      //Background stars
-      function generateBgStars() {
-        if (bgStars !== null) {
-          bgStarsGeometry.dispose();
-          bgStarsMaterial.dispose();
-          scene.remove(bgStars);
+        //Background stars
+        function generateBgStars() {
+          if (bgStars !== null) {
+            bgStarsGeometry.dispose();
+            bgStarsMaterial.dispose();
+            scene.remove(bgStars);
+          }
+
+          bgStarsGeometry = new THREE.BufferGeometry();
+          const bgStarsPositions = new Float32Array(parameters.stars * 3);
+
+          for (let j = 0; j < parameters.stars; j++) {
+            bgStarsPositions[j * 3 + 0] = (Math.random() - 0.5) * 20;
+            bgStarsPositions[j * 3 + 1] = (Math.random() - 0.5) * 20;
+            bgStarsPositions[j * 3 + 2] = (Math.random() - 0.5) * 20;
+          }
+
+          bgStarsGeometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(bgStarsPositions, 3),
+          );
+
+          bgStarsMaterial = new THREE.PointsMaterial({
+            color: 'white',
+            size: parameters.size,
+            depthWrite: false,
+            sizeAttenuation: true,
+            blending: AdditiveBlending,
+            color: parameters.starColor,
+            transparent: true,
+            alphaMap: shape,
+          });
+
+          bgStars = new THREE.Points(bgStarsGeometry, bgStarsMaterial);
+
+          scene.add(bgStars);
         }
 
-        bgStarsGeometry = new THREE.BufferGeometry();
-        const bgStarsPositions = new Float32Array(parameters.stars * 3);
+        generateBgStars();
 
-        for (let j = 0; j < parameters.stars; j++) {
-          bgStarsPositions[j * 3 + 0] = (Math.random() - 0.5) * 20;
-          bgStarsPositions[j * 3 + 1] = (Math.random() - 0.5) * 20;
-          bgStarsPositions[j * 3 + 2] = (Math.random() - 0.5) * 20;
+        //gALAXY GENerator
+        let geometry = null;
+        let material = null;
+        let points = null;
+
+        function generateGalaxy() {
+          if (points !== null) {
+            geometry.dispose();
+            material.dispose();
+            scene.remove(points);
+          }
+
+          geometry = new THREE.BufferGeometry();
+
+          const positions = new Float32Array(parameters.count * 3);
+          const colors = new Float32Array(parameters.count * 3);
+
+          const colorInside = new THREE.Color(parameters.insideColor);
+          const colorOutside = new THREE.Color(parameters.outsideColor);
+
+          for (let i = 0; i < parameters.count; i++) {
+            //Position
+            const x = Math.random() * parameters.radius;
+            const branchAngle =
+              ((i % parameters.branches) / parameters.branches) * 2 * Math.PI;
+            const spinAngle = x * parameters.spin;
+
+            const randomX =
+              Math.pow(Math.random(), parameters.randomnessPower) *
+              (Math.random() < 0.5 ? 1 : -1);
+            const randomY =
+              Math.pow(Math.random(), parameters.randomnessPower) *
+              (Math.random() < 0.5 ? 1 : -1);
+            const randomZ =
+              Math.pow(Math.random(), parameters.randomnessPower) *
+              (Math.random() < 0.5 ? 1 : -1);
+
+            positions[i * 3] = Math.sin(branchAngle + spinAngle) * x + randomX;
+            positions[i * 3 + 1] = randomY;
+            positions[i * 3 + 2] =
+              Math.cos(branchAngle + spinAngle) * x + randomZ;
+
+            //Color
+
+            const mixedColor = colorInside.clone();
+            mixedColor.lerp(colorOutside, x / parameters.radius);
+
+            colors[i * 3 + 0] = mixedColor.r;
+            colors[i * 3 + 1] = mixedColor.g;
+            colors[i * 3 + 2] = mixedColor.b;
+          }
+
+          geometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(positions, 3),
+          );
+          geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+          material = new THREE.PointsMaterial({
+            color: 'white',
+            size: parameters.size,
+            depthWrite: false,
+            sizeAttenuation: true,
+            blending: AdditiveBlending,
+            vertexColors: true,
+            transparent: true,
+            alphaMap: shape,
+          });
+
+          points = new THREE.Points(geometry, material);
+          scene.add(points);
         }
 
-        bgStarsGeometry.setAttribute(
-          'position',
-          new THREE.BufferAttribute(bgStarsPositions, 3),
-        );
+        generateGalaxy();
 
-        bgStarsMaterial = new THREE.PointsMaterial({
-          color: 'white',
-          size: parameters.size,
-          depthWrite: false,
-          sizeAttenuation: true,
-          blending: AdditiveBlending,
-          color: parameters.starColor,
-          transparent: true,
-          alphaMap: shape,
+        /**
+         * Sizes
+         */
+        const sizes = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+
+        window.addEventListener('resize', () => {
+          // Update sizes
+          sizes.width = window.innerWidth;
+          sizes.height = window.innerHeight;
+
+          // Update camera
+          camera.aspect = sizes.width / sizes.height;
+          camera.updateProjectionMatrix();
+
+          // Update renderer
+          renderer.setSize(sizes.width, sizes.height);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         });
 
-        bgStars = new THREE.Points(bgStarsGeometry, bgStarsMaterial);
-
-        scene.add(bgStars);
-      }
-
-      generateBgStars();
-
-      //gALAXY GENerator
-      let geometry = null;
-      let material = null;
-      let points = null;
-
-      function generateGalaxy() {
-        if (points !== null) {
-          geometry.dispose();
-          material.dispose();
-          scene.remove(points);
-        }
-
-        geometry = new THREE.BufferGeometry();
-
-        const positions = new Float32Array(parameters.count * 3);
-        const colors = new Float32Array(parameters.count * 3);
-
-        const colorInside = new THREE.Color(parameters.insideColor);
-        const colorOutside = new THREE.Color(parameters.outsideColor);
-
-        for (let i = 0; i < parameters.count; i++) {
-          //Position
-          const x = Math.random() * parameters.radius;
-          const branchAngle =
-            ((i % parameters.branches) / parameters.branches) * 2 * Math.PI;
-          const spinAngle = x * parameters.spin;
-
-          const randomX =
-            Math.pow(Math.random(), parameters.randomnessPower) *
-            (Math.random() < 0.5 ? 1 : -1);
-          const randomY =
-            Math.pow(Math.random(), parameters.randomnessPower) *
-            (Math.random() < 0.5 ? 1 : -1);
-          const randomZ =
-            Math.pow(Math.random(), parameters.randomnessPower) *
-            (Math.random() < 0.5 ? 1 : -1);
-
-          positions[i * 3] = Math.sin(branchAngle + spinAngle) * x + randomX;
-          positions[i * 3 + 1] = randomY;
-          positions[i * 3 + 2] =
-            Math.cos(branchAngle + spinAngle) * x + randomZ;
-
-          //Color
-
-          const mixedColor = colorInside.clone();
-          mixedColor.lerp(colorOutside, x / parameters.radius);
-
-          colors[i * 3 + 0] = mixedColor.r;
-          colors[i * 3 + 1] = mixedColor.g;
-          colors[i * 3 + 2] = mixedColor.b;
-        }
-
-        geometry.setAttribute(
-          'position',
-          new THREE.BufferAttribute(positions, 3),
+        /**
+         * Camera
+         */
+        // Base camera
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          sizes.width / sizes.height,
+          0.1,
+          100,
         );
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-        material = new THREE.PointsMaterial({
-          color: 'white',
-          size: parameters.size,
-          depthWrite: false,
-          sizeAttenuation: true,
-          blending: AdditiveBlending,
-          vertexColors: true,
-          transparent: true,
-          alphaMap: shape,
+        camera.position.x = generateRandom(1, 4, 1);
+        camera.position.y = generateRandom(1, 4, 1);
+        camera.position.z = generateRandom(1, 4, 1);
+        scene.add(camera);
+
+        // Controls
+        const controls = new OrbitControls(camera, canvas);
+        controls.enableDamping = true;
+
+        /**
+         * Renderer
+         */
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
         });
-
-        points = new THREE.Points(geometry, material);
-        scene.add(points);
-      }
-
-      generateGalaxy();
-
-      /**
-       * Sizes
-       */
-      const sizes = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-
-      window.addEventListener('resize', () => {
-        // Update sizes
-        sizes.width = window.innerWidth;
-        sizes.height = window.innerHeight;
-
-        // Update camera
-        camera.aspect = sizes.width / sizes.height;
-        camera.updateProjectionMatrix();
-
-        // Update renderer
         renderer.setSize(sizes.width, sizes.height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      });
 
-      /**
-       * Camera
-       */
-      // Base camera
-      const camera = new THREE.PerspectiveCamera(
-        75,
-        sizes.width / sizes.height,
-        0.1,
-        100,
-      );
+        /**
+         * Animate
+         */
+        const clock = new THREE.Clock();
 
-      camera.position.x = generateRandom(1, 4, 1);
-      camera.position.y = generateRandom(1, 4, 1);
-      camera.position.z = generateRandom(1, 4, 1);
-      scene.add(camera);
+        const tick = () => {
+          const elapsedTime = clock.getElapsedTime();
 
-      // Controls
-      const controls = new OrbitControls(camera, canvas);
-      controls.enableDamping = true;
+          //Update the camera
+          points.rotation.y = elapsedTime * randomXSpeed;
+          bgStars.rotation.y = -elapsedTime * randomYSpeed;
 
-      /**
-       * Renderer
-       */
-      const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-      });
-      renderer.setSize(sizes.width, sizes.height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          // Update controls
+          controls.update();
 
-      /**
-       * Animate
-       */
-      const clock = new THREE.Clock();
+          // Render
+          renderer.render(scene, camera);
 
-      const tick = () => {
-        const elapsedTime = clock.getElapsedTime();
+          // Call tick again on the next frame
+          window.requestAnimationFrame(tick);
+        };
 
-        //Update the camera
-        points.rotation.y = elapsedTime * randomXSpeed;
-        bgStars.rotation.y = -elapsedTime * randomYSpeed;
+        tick();
+      }, 200);
+    };
+    start();
 
-        // Update controls
-        controls.update();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // The tab has become visible
+        start();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
-        // Render
-        renderer.render(scene, camera);
-
-        // Call tick again on the next frame
-        window.requestAnimationFrame(tick);
-      };
-
-      tick();
-    }, 500);
+    return () => {
+      // Clean up the event listener when the component unmounts
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return (
