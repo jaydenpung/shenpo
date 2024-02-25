@@ -14,7 +14,7 @@ const Galaxy = () => {
     return randomNum;
   };
 
-  const randomXSpeed = generateRandom(0.1, 0.3, 0.1);
+  const randomXSpeed = generateRandom(0.1, 0.2, 0.1);
   const randomYSpeed = generateRandom(0.01, 0.05, 0.01);
 
   useEffect(() => {
