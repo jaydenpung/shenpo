@@ -5,10 +5,12 @@ import Calendly from './components/Calendly';
 import Galaxy from './components/Galaxy';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import LogRocket from 'logrocket';
 
 export default function Home() {
   const [beenHere, setBeenHere] = useState(true);
   const ref = useRef(null);
+  LogRocket.init('w02y0r/shenpo');
 
   useEffect(() => {
     localStorage.getItem('beenHere') ? setBeenHere(true) : setBeenHere(false);
