@@ -37,7 +37,7 @@ const Galaxy = () => {
         parameters.size = 0.01;
         parameters.radius = 5;
         parameters.branches = generateRandom(6, 12, 1);
-        parameters.spin = 1;
+        parameters.spin = -1;
         parameters.randomness = 0.3;
         parameters.randomnessPower = 5;
         parameters.stars = 9000;
@@ -224,7 +224,7 @@ const Galaxy = () => {
           const elapsedTime = clock.getElapsedTime();
 
           //Update the camera
-          points.rotation.y = elapsedTime * randomXSpeed;
+          points.rotation.y = -elapsedTime * randomXSpeed;
           bgStars.rotation.y = -elapsedTime * randomYSpeed;
 
           // Update controls
